@@ -385,21 +385,54 @@ class dummy_handler(object):
         print(self.name, "OFF")
         return True
 
+# class gpio_handler(object):
+#     def __init__(self, pin_number):
+#         self.pin = pin_number
+#         GPIO.setmode(GPIO.BOARD)
+#         GPIO.setup(pin_number, GPIO.OUT)
+
+#     def on(self):
+#         print(self.pin, "ON")
+#         GPIO.output(self.pin, 0)
+#         return True
+
+#     def off(self):
+#         print(self.pin, "OFF")
+#         GPIO.output(self.pin, 1)
+#         return True
+
 class gpio_handler(object):
-    def __init__(self, pin_number):
-        self.pin = pin_number
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(pin_number, GPIO.OUT)
+    def __init__(self, control_pins)
+        self.control_pins = control_pins
+        self.halfstep_seq = [
+            [1,0,0,0],
+            [1,1,0,0],
+            [0,1,0,0],
+            [0,1,1,0],
+            [0,0,1,0],
+            [0,0,1,1],
+            [0,0,0,1],
+            [1,0,0,1]
+            ]
+        for pin in self.control_pins:
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, 0)
 
     def on(self):
-        print(self.pin, "ON")
-        GPIO.output(self.pin, 0)
+        for i in range(512):
+            for halfstep in range(8):
+                for pin in range(4):
+                    print(self.control_pins[pin], "ON")
+                    GPIO.output(self.control_pins[pin], self.halfstep_seq[halfstep][pin])
+                time.sleep(0.001)
+        return True
+    
+    def off(self):
+        for pin in range(4):
+            print(self.control_pins[pin], "OFF")
+            GPIO.output(self.control_pins[pin], 1)
         return True
 
-    def off(self):
-        print(self.pin, "OFF")
-        GPIO.output(self.pin, 1)
-        return True
 
 # Each entry is a list with the following elements:
 #
@@ -417,8 +450,7 @@ class gpio_handler(object):
 # ]
 
 FAUXMOS = [
-        ['office lights', gpio_handler(35)],
-        ['kitchen lights', gpio_handler(37)],
+        ['ballerina', gpio_handler([7,11,13,15])],
     ]
 
 # FAUXMOS = [
